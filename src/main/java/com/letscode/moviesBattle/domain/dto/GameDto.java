@@ -1,16 +1,16 @@
 package com.letscode.moviesBattle.domain.dto;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Data
+@Builder
 public class GameDto {
 
-    private final long id;
-    private final MovieDto movieOne;
-    private final MovieDto movieTwo;
-    private final int rightAnswers;
-    private final int wrongAnswers;
+    private long id;
+    private MovieDto movieOne;
+    private MovieDto movieTwo;
+    private int rightAnswers;
+    private int wrongAnswers;
 
 }

@@ -3,11 +3,11 @@ package com.letscode.moviesBattle.domain.dto;
 import lombok.Builder;
 import lombok.Data;
 
-@Builder
 @Data
-public class MovieDto {
+@Builder
+public class AnswerDto {
 
-    private final String imdbID;
-    private final String title;
+    private long gameId;
+    private String imdbID;
 
 }
