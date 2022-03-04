@@ -9,15 +9,15 @@ class AnswerDtoTest {
     @Test
     void constructor() {
         //GIVEN
-        final var gameId = 20L;
+        final var userId = 20L;
         final var imdbID = "some id";
 
         //WHEN
-        final var answer = new AnswerDto(gameId, imdbID);
+        final var answer = new AnswerDto(userId, imdbID);
 
         //THEN
-        assertThat(answer.getGameId())
-                .isEqualTo(gameId);
+        assertThat(answer.getUserId())
+                .isEqualTo(userId);
         assertThat(answer.getImdbID())
                 .isEqualTo(imdbID);
     }

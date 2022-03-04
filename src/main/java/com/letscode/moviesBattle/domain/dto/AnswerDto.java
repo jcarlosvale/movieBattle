@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class AnswerDto {
 
-    private long gameId;
+    private long userId;
     private String imdbID;
 
 }

@@ -4,4 +4,6 @@ import com.letscode.moviesBattle.domain.repository.model.QuizEntity;
 
 public interface QuizService {
     QuizEntity generateQuizCandidate();
+
+    QuizEntity save(QuizEntity quizEntity);
 }

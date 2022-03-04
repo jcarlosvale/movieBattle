@@ -29,14 +29,14 @@ public class MoviesBattleControllerImpl implements MoviesBattleController {
     }
 
     @Override
-    @PostMapping(path = "/nextQuizz")
-    public ResponseEntity<GameDto> nextQuizz(@RequestBody final AnswerDto answerDto) {
-        return new ResponseEntity<>(GameDto.builder().build(), HttpStatus.CREATED);
+    @PostMapping(path = "/nextQuiz")
+    public ResponseEntity<GameDto> nextQuiz(@RequestBody final AnswerDto answerDto) throws BusinessException {
+        return new ResponseEntity<>(service.nextQuiz(answerDto), HttpStatus.CREATED);
     }
 
     @Override
     @PostMapping(path = "/endGame")
-    public ResponseEntity<GameDto> endGame(@RequestBody final long userId) {
-        return new ResponseEntity<>(GameDto.builder().build(), HttpStatus.CREATED);
+    public ResponseEntity<GameDto> stopGame(@RequestBody final long userId) throws BusinessException {
+        return new ResponseEntity<>(service.stopGame(userId), HttpStatus.CREATED);
     }
 }

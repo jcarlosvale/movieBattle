@@ -31,7 +31,7 @@ public class GameEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private UserEntity userEntity;
 
-    private boolean isActive;
+    private boolean active;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
@@ -52,6 +52,6 @@ public class GameEntity {
         this.userEntity = userEntity;
         this.quizzes = quizzes;
         this.lastQuizz = lastQuizz;
-        this.isActive = true;
+        this.active = true;
     }
 }

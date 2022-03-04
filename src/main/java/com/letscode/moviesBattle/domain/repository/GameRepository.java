@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface GameRepository extends JpaRepository<GameEntity, Long> {
 
-    Optional<GameEntity> findFirstByIsActiveTrue();
+    Optional<GameEntity> findGameEntityByUserEntityIdAAndActiveTrue(long userId);
+
 }

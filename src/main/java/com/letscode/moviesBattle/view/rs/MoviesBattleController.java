@@ -9,8 +9,8 @@ public interface MoviesBattleController {
 
     ResponseEntity<GameDto> startGame(long userId) throws BusinessException;
 
-    ResponseEntity<GameDto> nextQuizz(AnswerDto answerDto);
+    ResponseEntity<GameDto> nextQuiz(AnswerDto answerDto) throws BusinessException;
 
-    ResponseEntity<GameDto> endGame(long userId);
+    ResponseEntity<GameDto> stopGame(long userId) throws BusinessException;
 
 }

@@ -1,6 +1,7 @@
 package com.letscode.moviesBattle.domain.service.impl;
 
 import com.letscode.moviesBattle.domain.repository.QuizRepository;
+import com.letscode.moviesBattle.domain.repository.model.MovieEntity;
 import com.letscode.moviesBattle.domain.repository.model.QuizEntity;
 import com.letscode.moviesBattle.domain.service.MovieService;
 import com.letscode.moviesBattle.domain.service.QuizService;
@@ -16,9 +17,19 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizEntity generateQuizCandidate() {
+        final MovieEntity movieOne = movieService.getRandomMovie();
+        MovieEntity movieTwo = movieService.getRandomMovie();
+        while(movieTwo.equals(movieOne)) {
+            movieTwo = movieService.getRandomMovie();
+        }
         return QuizEntity.builder()
-                .movieOne(movieService.getRandomMovie())
-                .movieTwo(movieService.getRandomMovie())
+                .movieOne(movieOne)
+                .movieTwo(movieTwo)
                 .build();
+    }
+
+    @Override
+    public QuizEntity save(QuizEntity quizEntity) {
+        return quizRepository.save(quizEntity);
     }
 }
