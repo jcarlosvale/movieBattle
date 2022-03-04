@@ -31,8 +31,8 @@ class GameEntityTest {
         final var id = 1;
         final var user = mock(UserEntity.class);
         final var isActive = true;
-        final var lastQuizz = mock(QuizzEntity.class);
-        final var quizzes = Set.of(mock(QuizzEntity.class));
+        final var lastQuizz = mock(QuizEntity.class);
+        final var quizzes = Set.of(mock(QuizEntity.class));
 
         final var entity = new GameEntity(id, user, lastQuizz, quizzes);
 
@@ -52,7 +52,7 @@ class GameEntityTest {
 
     @ParameterizedTest
     @MethodSource("invalidFields")
-    void invalidFieldsConstructor(final UserEntity user, final QuizzEntity lastQuizz, final Set<QuizzEntity> quizzes) {
+    void invalidFieldsConstructor(final UserEntity user, final QuizEntity lastQuizz, final Set<QuizEntity> quizzes) {
         //GIVEN
         final var entity = new GameEntity(1, user, lastQuizz, quizzes);
 
@@ -65,9 +65,9 @@ class GameEntityTest {
 
     private static Stream<Arguments> invalidFields() {
         return Stream.of(
-                arguments(null, mock(QuizzEntity.class), Set.of(mock(QuizzEntity.class))),
-                arguments(mock(UserEntity.class), null, Set.of(mock(QuizzEntity.class))),
-                arguments(mock(UserEntity.class), mock(QuizzEntity.class), null)
+                arguments(null, mock(QuizEntity.class), Set.of(mock(QuizEntity.class))),
+                arguments(mock(UserEntity.class), null, Set.of(mock(QuizEntity.class))),
+                arguments(mock(UserEntity.class), mock(QuizEntity.class), null)
         );
     }
 }

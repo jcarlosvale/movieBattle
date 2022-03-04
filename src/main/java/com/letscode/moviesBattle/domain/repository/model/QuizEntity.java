@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +15,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuizzEntity {
+@Builder
+public class QuizEntity {
 
     @Id
     @GeneratedValue
@@ -36,7 +38,7 @@ public class QuizzEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        QuizzEntity that = (QuizzEntity) o;
+        QuizEntity that = (QuizEntity) o;
         return
                 this.movieOne.equals(that.movieOne) && this.movieTwo.equals(that.movieTwo) ||
                 this.movieOne.equals(that.movieTwo) && this.movieTwo.equals(that.movieOne);
