@@ -1,33 +1,32 @@
 package com.letscode.moviesBattle.domain.repository.model;
 
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Table
+@Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class QuizzEntity {
 
     @Id
     @GeneratedValue
-    private final long id;
+    private long id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="imdbID")
-    private final MovieEntity movieOne;
+    private MovieEntity movieOne;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="imdbID")
-    private final MovieEntity movieTwo;
+    private MovieEntity movieTwo;
 
     @Override
     public boolean equals(Object o) {
