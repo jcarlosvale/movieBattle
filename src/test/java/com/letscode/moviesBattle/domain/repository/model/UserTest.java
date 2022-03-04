@@ -8,11 +8,12 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class MovieEntityTest {
+class UserTest {
 
     private Validator validator;
 
@@ -22,35 +23,33 @@ class MovieEntityTest {
         validator = factory.getValidator();
     }
 
-    @ParameterizedTest
-    @MethodSource("validFields")
-    void validConstructor(final String id, final String title, final double rating, final int votes) {
+    @Test
+    void validConstructor() {
         //GIVEN
-        final var entity = new MovieEntity(id, title, rating, votes);
+        final var id = 1;
+        final var userName = "some username";
+        final var password = "some password";
+        final var roles = "some roles";
+        final var isActive = true;
+        final var entity = new User(1, userName, password, isActive, roles);
 
         //WHEN
         final var violations = validator.validate(entity);
 
         //THEN
         assertThat(violations.isEmpty()).isTrue();
-        assertThat(entity.getImdbID()).isEqualTo(id);
-        assertThat(entity.getTitle()).isEqualTo(title);
-        assertThat(entity.getImdbRating()).isEqualTo(rating);
-        assertThat(entity.getImdbVotes()).isEqualTo(votes);
-    }
-
-    private static Stream<Arguments> validFields() {
-        return Stream.of(
-                arguments("", "", 0.00, 0),
-                arguments("", "", 10.00, 0)
-        );
+        assertThat(entity.getId()).isEqualTo(id);
+        assertThat(entity.getUserName()).isEqualTo(userName);
+        assertThat(entity.getPassword()).isEqualTo(password);
+        assertThat(entity.getRoles()).isEqualTo(roles);
+        assertThat(entity.isActive()).isEqualTo(isActive);
     }
 
     @ParameterizedTest
     @MethodSource("invalidFields")
-    void invalidFieldsConstructor(final String id, final String title, final double rating, final int votes) {
+    void invalidFieldsConstructor(final int id, final String userName, final String password, final boolean isActive, final String roles) {
         //GIVEN
-        final var entity = new MovieEntity(id, title, rating, votes);
+        final var entity = new User(id, userName, password, isActive, roles);
 
         //WHEN
         final var violations = validator.validate(entity);
@@ -61,11 +60,9 @@ class MovieEntityTest {
 
     private static Stream<Arguments> invalidFields() {
         return Stream.of(
-                arguments(null, "some string", 5.00, 10),
-                arguments("some string", null, 5.00, 10),
-                arguments("some string", "some string", -0.01, 10),
-                arguments("some string", "some string", 10.01, 10),
-                arguments("some string", "some string", 5.00, -1)
+                arguments(1, null, "some string", true, "some string"),
+                arguments(1, "some string", null, true, "some string"),
+                arguments(1, "some string", "some string", true, null)
         );
     }
 }
