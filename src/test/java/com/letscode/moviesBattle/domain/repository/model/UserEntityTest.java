@@ -13,7 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class UserTest {
+class UserEntityTest {
 
     private Validator validator;
 
@@ -31,7 +31,7 @@ class UserTest {
         final var password = "some password";
         final var roles = "some roles";
         final var isActive = true;
-        final var entity = new User(1, userName, password, isActive, roles);
+        final var entity = new UserEntity(1, userName, password, isActive, roles);
 
         //WHEN
         final var violations = validator.validate(entity);
@@ -49,7 +49,7 @@ class UserTest {
     @MethodSource("invalidFields")
     void invalidFieldsConstructor(final int id, final String userName, final String password, final boolean isActive, final String roles) {
         //GIVEN
-        final var entity = new User(id, userName, password, isActive, roles);
+        final var entity = new UserEntity(id, userName, password, isActive, roles);
 
         //WHEN
         final var violations = validator.validate(entity);

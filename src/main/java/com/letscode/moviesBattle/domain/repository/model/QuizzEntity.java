@@ -13,11 +13,10 @@ import lombok.Data;
 @Table
 @Data
 @AllArgsConstructor
-public class TupleOfMoviesEntity {
+public class QuizzEntity {
 
     @Id
     @GeneratedValue
-    @NotNull
     private final long id;
 
     @NotNull
@@ -38,7 +37,7 @@ public class TupleOfMoviesEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        TupleOfMoviesEntity that = (TupleOfMoviesEntity) o;
+        QuizzEntity that = (QuizzEntity) o;
         return
                 this.movieOne.equals(that.movieOne) && this.movieTwo.equals(that.movieTwo) ||
                 this.movieOne.equals(that.movieTwo) && this.movieTwo.equals(that.movieOne);

@@ -12,7 +12,7 @@ import lombok.Data;
 @Table
 @Data
 @AllArgsConstructor
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
