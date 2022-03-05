@@ -41,7 +41,7 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
     public GameDto nextQuiz(final AnswerDto answerDto) throws BusinessException {
         GameEntity gameEntity =
                 gameRepository
-                        .findGameEntityByUserEntityIdAndActiveTrue(answerDto.getUserId())
+                        .findGameEntityByUserEntityId(answerDto.getUserId())
                         .orElseThrow(GameNotFoundException::new);
         validateErrorLimit(gameEntity);
         updateScore(gameEntity, answerDto.getImdbID());

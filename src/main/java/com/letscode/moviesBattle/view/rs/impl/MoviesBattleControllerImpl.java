@@ -22,8 +22,14 @@ public class MoviesBattleControllerImpl implements MoviesBattleController {
 
     private final MoviesBattleService service;
 
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<String> ping(@RequestBody(required = false) final String user) throws BusinessException {
+      return new ResponseEntity<>("PING " + user, HttpStatus.OK);
+
+    }
+
     @Override
-    @PostMapping(path = "/startGame")
+    @PostMapping(path = "/startGame", consumes = "application/json")
     public ResponseEntity<GameDto> startGame(@RequestBody final long userId) throws BusinessException {
         return new ResponseEntity<>(service.startGame(userId), HttpStatus.CREATED);
     }

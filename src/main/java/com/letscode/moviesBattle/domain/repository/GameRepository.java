@@ -9,4 +9,6 @@ public interface GameRepository extends JpaRepository<GameEntity, Long> {
 
     Optional<GameEntity> findGameEntityByUserEntityIdAndActiveTrue(long userId);
 
+    Optional<GameEntity> findGameEntityByUserEntityId(Long userId);
+
 }
