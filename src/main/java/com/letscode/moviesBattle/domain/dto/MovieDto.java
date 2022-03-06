@@ -1,13 +1,17 @@
 package com.letscode.moviesBattle.domain.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Builder
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MovieDto {
 
-    private final String imdbID;
-    private final String title;
+    private String imdbID;
+    private String title;
 
 }

@@ -6,4 +6,6 @@ public interface QuizService {
     QuizEntity generateQuizCandidate();
 
     QuizEntity save(QuizEntity quizEntity);
+
+    String evaluateWinnerId(QuizEntity quiz);
 }

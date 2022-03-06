@@ -32,4 +32,11 @@ public class QuizServiceImpl implements QuizService {
     public QuizEntity save(QuizEntity quizEntity) {
         return quizRepository.save(quizEntity);
     }
+
+    @Override
+    public String evaluateWinnerId(final QuizEntity quiz) {
+        final double scoreOne = quiz.getMovieOne().getImdbRating() * quiz.getMovieOne().getImdbVotes();
+        final double scoreTwo = quiz.getMovieTwo().getImdbRating() * quiz.getMovieTwo().getImdbVotes();
+        return scoreOne > scoreTwo ? quiz.getMovieOne().getImdbID() : quiz.getMovieTwo().getImdbID();
+    }
 }

@@ -1,9 +1,9 @@
 package com.letscode.moviesBattle.domain.dto;
 
+import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-
-import org.junit.jupiter.api.Test;
 
 class GameDtoTest {
 
@@ -20,7 +20,7 @@ class GameDtoTest {
         final var gameDto = new GameDto(id, movieOne, movieTwo, rightAnswers, wrongAnswers);
 
         //THEN
-        assertThat(gameDto.getId())
+        assertThat(gameDto.getUserId())
                 .isEqualTo(id);
         assertThat(gameDto.getMovieOne())
                 .isEqualTo(movieOne);

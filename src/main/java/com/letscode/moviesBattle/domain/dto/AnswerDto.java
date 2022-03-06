@@ -1,5 +1,6 @@
 package com.letscode.moviesBattle.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,22 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AnswerDto {
 
+    @JsonProperty(required = true)
     private long userId;
+
+    @JsonProperty(required = true)
     private String imdbID;
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public String getImdbID() {
-        return imdbID;
-    }
-
-    public void setImdbID(String imdbID) {
-        this.imdbID = imdbID;
-    }
 }

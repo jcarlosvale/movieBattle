@@ -2,18 +2,19 @@ package com.letscode.moviesBattle.domain.service.impl;
 
 import com.letscode.moviesBattle.domain.dto.AnswerDto;
 import com.letscode.moviesBattle.domain.dto.GameDto;
-import com.letscode.moviesBattle.domain.dto.MovieDto;
+import com.letscode.moviesBattle.domain.dto.UserDto;
 import com.letscode.moviesBattle.domain.exception.*;
 import com.letscode.moviesBattle.domain.repository.GameRepository;
-import com.letscode.moviesBattle.domain.repository.UserRepository;
 import com.letscode.moviesBattle.domain.repository.model.GameEntity;
-import com.letscode.moviesBattle.domain.repository.model.MovieEntity;
 import com.letscode.moviesBattle.domain.repository.model.QuizEntity;
 import com.letscode.moviesBattle.domain.repository.model.UserEntity;
 import com.letscode.moviesBattle.domain.service.MoviesBattleService;
 import com.letscode.moviesBattle.domain.service.QuizService;
+import com.letscode.moviesBattle.domain.service.UserService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -24,39 +25,52 @@ import java.util.Set;
 public class MoviesBattleServiceImpl implements MoviesBattleService {
 
     private final QuizService quizService;
+    private final UserService userService;
 
     private final GameRepository gameRepository;
-    private final UserRepository userRepository;
+
+    private final Converter converter;
 
     private final int MAX_ERRORS = 3;
 
     @Override
-    public GameDto startGame(final long userId) throws BusinessException {
-        validateExclusiveGame(userId);
-        final GameEntity gameEntity = createGame(userId);
-        return toDto(gameEntity);
+    public GameDto startGame(final UserDto userDto) throws BusinessException {
+        final UserEntity userEntity =
+                userService
+                        .retrieveUserById(userDto.getUserId())
+                        .orElseThrow(UserNotFoundException::new);
+        validateExclusiveGame(userEntity);
+        final GameEntity gameEntity = createGame(userEntity);
+        return converter.toDto(gameEntity);
     }
 
     @Override
     public GameDto nextQuiz(final AnswerDto answerDto) throws BusinessException {
-        GameEntity gameEntity =
-                gameRepository
-                        .findGameEntityByUserEntityId(answerDto.getUserId())
-                        .orElseThrow(GameNotFoundException::new);
+        GameEntity gameEntity = getGameEntityByUserId(answerDto.getUserId());
         validateErrorLimit(gameEntity);
         updateScore(gameEntity, answerDto.getImdbID());
         insertNewQuiz(gameEntity);
-        return toDto(gameRepository.save(gameEntity));
+        saveGameAndLastQuiz(gameEntity);
+        return converter.toDto(gameEntity);
     }
 
     @Override
-    public GameDto stopGame(final long userId) throws BusinessException {
-        GameEntity gameEntity =
-                gameRepository
-                        .findGameEntityByUserEntityIdAndActiveTrue(userId)
-                        .orElseThrow(GameNotFoundException::new);
+    public GameDto stopGame(final UserDto userDto) throws BusinessException {
+        GameEntity gameEntity = getGameEntityByUserId(userDto.getUserId());
         gameEntity.setActive(false);
-        return toDto(gameRepository.save(gameEntity));
+        return converter.toDto(gameRepository.save(gameEntity));
+    }
+
+    @Transactional
+    protected GameEntity saveGameAndLastQuiz(GameEntity gameEntity) {
+        quizService.save(gameEntity.getLastQuiz());
+        return gameRepository.save(gameEntity);
+    }
+
+    private GameEntity getGameEntityByUserId(@NonNull final long userId) throws GameNotFoundException {
+        return gameRepository
+                .findGameEntityByUserEntityIdAndActiveTrue(userId)
+                .orElseThrow(GameNotFoundException::new);
     }
 
     private GameEntity insertNewQuiz(final GameEntity game) {
@@ -64,13 +78,13 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
         while(game.getQuizzes().contains(quiz)) {
             quiz = quizService.generateQuizCandidate();
         }
-        game.setLastQuizz(quiz);
+        game.setLastQuiz(quiz);
         game.getQuizzes().add(quiz);
         return game;
     }
 
     private GameEntity updateScore(final GameEntity gameEntity, final String imdbID) {
-        final String imdbWinner = evaluateWinnerId(gameEntity.getLastQuizz());
+        final String imdbWinner = quizService.evaluateWinnerId(gameEntity.getLastQuiz());
         if (imdbWinner.equals(imdbID)) {
             gameEntity.setRightAnswers(gameEntity.getRightAnswers()+1);
         } else {
@@ -79,37 +93,13 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
         return gameEntity;
     }
 
-    private String evaluateWinnerId(final QuizEntity quiz) {
-        final double scoreOne = quiz.getMovieOne().getImdbRating() * quiz.getMovieOne().getImdbVotes();
-        final double socreTwo = quiz.getMovieTwo().getImdbRating() * quiz.getMovieTwo().getImdbVotes();
-        return scoreOne > socreTwo ? quiz.getMovieOne().getImdbID() : quiz.getMovieTwo().getImdbID();
-    }
-
     private void validateErrorLimit(final GameEntity gameEntity) throws MaximumErrorReachedException {
         if (gameEntity.getWrongAnswers() >= MAX_ERRORS) {
             throw new MaximumErrorReachedException();
         }
     }
 
-    private GameDto toDto(final GameEntity gameEntity) {
-        return GameDto.builder()
-                .id(gameEntity.getId())
-                .movieOne(toDto(gameEntity.getLastQuizz().getMovieOne()))
-                .movieTwo(toDto(gameEntity.getLastQuizz().getMovieTwo()))
-                .rightAnswers(gameEntity.getRightAnswers())
-                .wrongAnswers(gameEntity.getWrongAnswers())
-                .build();
-    }
-
-    private MovieDto toDto(final MovieEntity movie) {
-        return MovieDto.builder()
-                .imdbID(movie.getImdbID())
-                .title(movie.getTitle())
-                .build();
-    }
-
-    private GameEntity createGame(final long userId) throws UserNotFoundException {
-        final UserEntity userEntity = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    private GameEntity createGame(final UserEntity userEntity) {
         final QuizEntity quizEntity = quizService.generateQuizCandidate();
         quizService.save(quizEntity);
         final Set<QuizEntity> quizzes = new HashSet<>();
@@ -118,14 +108,15 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
                         .builder()
                         .userEntity(userEntity)
                         .active(true)
-                        .lastQuizz(quizEntity)
+                        .lastQuiz(quizEntity)
                         .quizzes(quizzes)
                         .build()
         );
     }
 
-    private void validateExclusiveGame(final long userId) throws GameNotFinishedException {
-        final Optional<GameEntity> optionalGameEntity = gameRepository.findGameEntityByUserEntityIdAndActiveTrue(userId);
+    private void validateExclusiveGame(final UserEntity userEntity) throws GameNotFinishedException {
+        final Optional<GameEntity> optionalGameEntity =
+                gameRepository.findGameEntityByUserEntityIdAndActiveTrue(userEntity.getId());
         if (optionalGameEntity.isPresent()) {
             throw new GameNotFinishedException();
         }

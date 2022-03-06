@@ -1,13 +1,13 @@
 package com.letscode.moviesBattle.domain.dto;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MovieDtoTest {
 
     @Test
-    void construct() {
+    void constructor() {
         //GIVEN
 
         final var imdb = "some imdb";

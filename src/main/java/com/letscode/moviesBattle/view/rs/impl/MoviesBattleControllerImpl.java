@@ -2,6 +2,7 @@ package com.letscode.moviesBattle.view.rs.impl;
 
 import com.letscode.moviesBattle.domain.dto.AnswerDto;
 import com.letscode.moviesBattle.domain.dto.GameDto;
+import com.letscode.moviesBattle.domain.dto.UserDto;
 import com.letscode.moviesBattle.domain.exception.BusinessException;
 import com.letscode.moviesBattle.domain.service.MoviesBattleService;
 import com.letscode.moviesBattle.view.rs.MoviesBattleController;
@@ -22,16 +23,10 @@ public class MoviesBattleControllerImpl implements MoviesBattleController {
 
     private final MoviesBattleService service;
 
-    @PostMapping(consumes = "application/json")
-    public ResponseEntity<String> ping(@RequestBody(required = false) final String user) throws BusinessException {
-      return new ResponseEntity<>("PING " + user, HttpStatus.OK);
-
-    }
-
     @Override
     @PostMapping(path = "/startGame", consumes = "application/json")
-    public ResponseEntity<GameDto> startGame(@RequestBody final long userId) throws BusinessException {
-        return new ResponseEntity<>(service.startGame(userId), HttpStatus.CREATED);
+    public ResponseEntity<GameDto> startGame(@RequestBody final UserDto userDto) throws BusinessException {
+        return new ResponseEntity<>(service.startGame(userDto), HttpStatus.CREATED);
     }
 
     @Override
@@ -42,7 +37,7 @@ public class MoviesBattleControllerImpl implements MoviesBattleController {
 
     @Override
     @PostMapping(path = "/endGame")
-    public ResponseEntity<GameDto> stopGame(@RequestBody final long userId) throws BusinessException {
-        return new ResponseEntity<>(service.stopGame(userId), HttpStatus.CREATED);
+    public ResponseEntity<GameDto> stopGame(@RequestBody final UserDto userDto) throws BusinessException {
+        return new ResponseEntity<>(service.stopGame(userDto), HttpStatus.CREATED);
     }
 }

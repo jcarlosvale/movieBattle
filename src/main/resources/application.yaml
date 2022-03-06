@@ -1,5 +1,7 @@
 server:
-  port: 8081
+  port: 8080
+  error:
+    include-message: always
 
 spring:
   datasource:
@@ -8,7 +10,8 @@ spring:
     password:
     driverClassName: org.h2.Driver
   jpa:
-    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
   h2:
     #http://localhost:8080/h2-console
     console.enabled: true
