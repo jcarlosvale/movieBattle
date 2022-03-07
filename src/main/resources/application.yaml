@@ -17,4 +17,6 @@ spring:
     console.enabled: true
 
 movies:
+  apiKey: "a7c0b9a6"
   maxToLoad: 10
+  gzipMoviesFile: "title.ratings.tsv.gz"

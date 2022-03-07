@@ -7,5 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 public class MoviesBattleProperties {
 
+    private String apiKey;
     private int maxToLoad;
+    private String gzipMoviesFile;
 }
