@@ -1,6 +1,7 @@
 package com.letscode.moviesBattle.domain.repository.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "USER")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity {

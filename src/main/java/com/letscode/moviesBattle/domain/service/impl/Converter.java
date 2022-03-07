@@ -25,8 +25,4 @@ public class Converter {
                 .title(movie.getTitle())
                 .build();
     }
-
-    private Converter() {
-
-    }
 }
