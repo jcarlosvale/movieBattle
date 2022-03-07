@@ -1,8 +1,8 @@
 package com.letscode.moviesBattle.config;
 
+import com.letscode.moviesBattle.config.dto.ImdbMovieDto;
 import com.letscode.moviesBattle.domain.repository.MovieRepository;
 import com.letscode.moviesBattle.domain.repository.model.MovieEntity;
-import com.letscode.moviesBattle.scrap.dto.ImdbMovieDto;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,7 +50,7 @@ public class MoviesLoader {
                     final ImdbMovieDto imdbMovieDto =
                             restTemplate.getForEntity("https://www.omdbapi.com/?apikey=" + moviesBattleProperties.getApiKey() + "&i=" + imdbId,
                                     ImdbMovieDto.class).getBody();
-                    if (Objects.nonNull(imdbMovieDto) && !imdbMovieDto.getTitle().isEmpty()) {
+                    if (Objects.nonNull(imdbMovieDto) && Objects.nonNull(imdbMovieDto.getTitle()) && !imdbMovieDto.getTitle().isEmpty()) {
                         movieRepository.save(
                                 MovieEntity.builder()
                                         .imdbID(fields[0])
