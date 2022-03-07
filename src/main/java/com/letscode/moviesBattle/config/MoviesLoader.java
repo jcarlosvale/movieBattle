@@ -34,9 +34,10 @@ public class MoviesLoader {
     private final MovieRepository movieRepository;
     private final MoviesBattleProperties moviesBattleProperties;
 
-    public void loadMovies() throws IOException {
-        log.info("INSERTING MOVIES TO DATABASE...");
+    public void loadMovies() {
         final List<String> lines = readFileLines();
+        if (lines.isEmpty()) return;
+        log.info("INSERTING MOVIES TO DATABASE...");
         final Set<Integer> addedLine = new HashSet<>();
         final Random random = new Random();
         final RestTemplate restTemplate = new RestTemplate();
@@ -67,12 +68,16 @@ public class MoviesLoader {
         }
     }
 
-    private List<String> readFileLines() throws IOException {
-        final File file = ResourceUtils.getFile("classpath:"+ moviesBattleProperties.getGzipMoviesFile());
-        final InputStream fileStream = new FileInputStream(file);
-        final InputStream gzipStream = new GZIPInputStream(fileStream);
-        final Reader decoder = new InputStreamReader(gzipStream, StandardCharsets.UTF_8);
-        final BufferedReader buffered = new BufferedReader(decoder);
-        return buffered.lines().collect(Collectors.toList());
+    private List<String> readFileLines() {
+        try {
+            final File file = ResourceUtils.getFile("classpath:"+ moviesBattleProperties.getGzipMoviesFile());
+            final InputStream fileStream = new FileInputStream(file);
+            final InputStream gzipStream = new GZIPInputStream(fileStream);
+            final Reader decoder = new InputStreamReader(gzipStream, StandardCharsets.UTF_8);
+            final BufferedReader buffered = new BufferedReader(decoder);
+            return buffered.lines().collect(Collectors.toList());
+        } catch (IOException e) {
+            return List.of();
+        }
     }
 }
