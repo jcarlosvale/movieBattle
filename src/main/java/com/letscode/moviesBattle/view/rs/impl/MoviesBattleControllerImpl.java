@@ -1,7 +1,10 @@
 package com.letscode.moviesBattle.view.rs.impl;
 
+import static com.letscode.moviesBattle.view.rs.impl.Constants.MOVIES_BATTLE_MAPPING_PATH;
+
 import com.letscode.moviesBattle.domain.dto.AnswerDto;
 import com.letscode.moviesBattle.domain.dto.GameDto;
+import com.letscode.moviesBattle.domain.dto.RankingOfPlayersDto;
 import com.letscode.moviesBattle.domain.dto.UserDto;
 import com.letscode.moviesBattle.domain.exception.BusinessException;
 import com.letscode.moviesBattle.domain.service.MoviesBattleService;
@@ -9,12 +12,12 @@ import com.letscode.moviesBattle.view.rs.MoviesBattleController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import static com.letscode.moviesBattle.view.rs.impl.Constants.MOVIES_BATTLE_MAPPING_PATH;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,8 +39,14 @@ public class MoviesBattleControllerImpl implements MoviesBattleController {
     }
 
     @Override
-    @PostMapping(path = "/endGame")
+    @PostMapping(path = "/stopGame")
     public ResponseEntity<GameDto> stopGame(@RequestBody final UserDto userDto) throws BusinessException {
         return new ResponseEntity<>(service.stopGame(userDto), HttpStatus.CREATED);
+    }
+
+    @Override
+    @GetMapping(path = "/ranking/{top}")
+    public ResponseEntity<RankingOfPlayersDto> getRanking(@PathVariable int top) throws BusinessException {
+        return new ResponseEntity<>(service.getRanking(top), HttpStatus.OK);
     }
 }

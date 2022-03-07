@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class RankingDto {
 
     @JsonProperty(required = true)
-    private long userId;
+    private int topPlayersSize;
 
 }

@@ -1,6 +1,5 @@
 package com.letscode.moviesBattle.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class PlayerPositionDto {
 
-    @JsonProperty(required = true)
-    private long userId;
+    private int position;
+    private String user;
+    private int points;
 
 }

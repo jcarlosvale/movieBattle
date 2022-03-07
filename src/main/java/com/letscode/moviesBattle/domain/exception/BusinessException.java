@@ -1,4 +1,4 @@
 package com.letscode.moviesBattle.domain.exception;
 
-public class BusinessException extends Exception{
+public abstract class BusinessException extends Exception{
 }

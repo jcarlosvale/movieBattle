@@ -1,29 +1,40 @@
 package com.letscode.moviesBattle.domain.service.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.letscode.moviesBattle.domain.dto.AnswerDto;
 import com.letscode.moviesBattle.domain.dto.GameDto;
+import com.letscode.moviesBattle.domain.dto.RankingOfPlayersDto;
 import com.letscode.moviesBattle.domain.dto.UserDto;
-import com.letscode.moviesBattle.domain.exception.*;
+import com.letscode.moviesBattle.domain.exception.BusinessException;
+import com.letscode.moviesBattle.domain.exception.GameNotFinishedException;
+import com.letscode.moviesBattle.domain.exception.GameNotFoundException;
+import com.letscode.moviesBattle.domain.exception.InvalidValueException;
+import com.letscode.moviesBattle.domain.exception.MaximumErrorReachedException;
+import com.letscode.moviesBattle.domain.exception.UserNotFoundException;
 import com.letscode.moviesBattle.domain.repository.GameRepository;
 import com.letscode.moviesBattle.domain.repository.model.GameEntity;
 import com.letscode.moviesBattle.domain.repository.model.QuizEntity;
 import com.letscode.moviesBattle.domain.repository.model.UserEntity;
+import com.letscode.moviesBattle.domain.repository.projection.RankingProjection;
 import com.letscode.moviesBattle.domain.service.QuizService;
 import com.letscode.moviesBattle.domain.service.UserService;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.HashSet;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MoviesBattleServiceImplTest {
@@ -36,6 +47,8 @@ class MoviesBattleServiceImplTest {
     private AnswerDto answerDto;
     @Mock
     private UserDto userDto;
+    @Mock
+    private RankingOfPlayersDto rankingOfPlayersDto;
 
     @Mock
     private GameEntity gameEntity;
@@ -301,5 +314,29 @@ class MoviesBattleServiceImplTest {
         verify(gameEntity, never()).setActive(true);
         verify(gameEntity, times(1)).setActive(false);
         assertThat(actualDto).isEqualTo(gameDto);
+    }
+
+    @Test
+    void getRankingNotAllowedUsingInvalidTopValue() {
+        //GIVEN WHEN THEN
+        assertThatThrownBy(() -> service.getRanking(0))
+                .isInstanceOf(InvalidValueException.class);
+    }
+
+    @Test
+    void getRankingOk() throws BusinessException {
+        //GIVEN
+        final var top = 2;
+        final var rankingProjectionList = List.of(mock(RankingProjection.class));
+        given(gameRepository.getRanking(top))
+                .willReturn(rankingProjectionList);
+        given(converter.toDto(rankingProjectionList))
+                .willReturn(rankingOfPlayersDto);
+
+        //WHEN
+        final var dto = service.getRanking(top);
+
+        //THEN
+        assertThat(dto).isEqualTo(rankingOfPlayersDto);
     }
 }

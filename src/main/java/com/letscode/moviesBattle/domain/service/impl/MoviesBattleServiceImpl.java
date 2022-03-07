@@ -2,23 +2,30 @@ package com.letscode.moviesBattle.domain.service.impl;
 
 import com.letscode.moviesBattle.domain.dto.AnswerDto;
 import com.letscode.moviesBattle.domain.dto.GameDto;
+import com.letscode.moviesBattle.domain.dto.RankingOfPlayersDto;
 import com.letscode.moviesBattle.domain.dto.UserDto;
-import com.letscode.moviesBattle.domain.exception.*;
+import com.letscode.moviesBattle.domain.exception.BusinessException;
+import com.letscode.moviesBattle.domain.exception.GameNotFinishedException;
+import com.letscode.moviesBattle.domain.exception.GameNotFoundException;
+import com.letscode.moviesBattle.domain.exception.InvalidValueException;
+import com.letscode.moviesBattle.domain.exception.MaximumErrorReachedException;
+import com.letscode.moviesBattle.domain.exception.UserNotFoundException;
 import com.letscode.moviesBattle.domain.repository.GameRepository;
 import com.letscode.moviesBattle.domain.repository.model.GameEntity;
 import com.letscode.moviesBattle.domain.repository.model.QuizEntity;
 import com.letscode.moviesBattle.domain.repository.model.UserEntity;
+import com.letscode.moviesBattle.domain.repository.projection.RankingProjection;
 import com.letscode.moviesBattle.domain.service.MoviesBattleService;
 import com.letscode.moviesBattle.domain.service.QuizService;
 import com.letscode.moviesBattle.domain.service.UserService;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +37,6 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
     private final GameRepository gameRepository;
 
     private final Converter converter;
-
-    private final int MAX_ERRORS = 3;
 
     @Override
     public GameDto startGame(final UserDto userDto) throws BusinessException {
@@ -61,8 +66,15 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
         return converter.toDto(gameRepository.save(gameEntity));
     }
 
+    @Override
+    public RankingOfPlayersDto getRanking(final int top) throws BusinessException {
+        if (top <= 0) throw new InvalidValueException();
+        List<RankingProjection> rankingProjectionList = gameRepository.getRanking(top);
+        return converter.toDto(rankingProjectionList);
+    }
+
     @Transactional
-    protected GameEntity saveGameAndLastQuiz(GameEntity gameEntity) {
+    protected GameEntity saveGameAndLastQuiz(final GameEntity gameEntity) {
         quizService.save(gameEntity.getLastQuiz());
         return gameRepository.save(gameEntity);
     }
@@ -94,6 +106,7 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
     }
 
     private void validateErrorLimit(final GameEntity gameEntity) throws MaximumErrorReachedException {
+        final int MAX_ERRORS = 3;
         if (gameEntity.getWrongAnswers() >= MAX_ERRORS) {
             throw new MaximumErrorReachedException();
         }
