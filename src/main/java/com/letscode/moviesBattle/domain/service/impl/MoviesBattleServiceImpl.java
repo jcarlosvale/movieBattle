@@ -51,7 +51,7 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
 
     @Override
     public GameDto nextQuiz(final AnswerDto answerDto) throws BusinessException {
-        GameEntity gameEntity = getGameEntityByUserId(answerDto.getUserId());
+        GameEntity gameEntity = getActiveGameEntityByUserId(answerDto.getUserId());
         validateErrorLimit(gameEntity);
         updateScore(gameEntity, answerDto.getImdbID());
         insertNewQuiz(gameEntity);
@@ -61,7 +61,7 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
 
     @Override
     public GameDto stopGame(final UserDto userDto) throws BusinessException {
-        GameEntity gameEntity = getGameEntityByUserId(userDto.getUserId());
+        GameEntity gameEntity = getActiveGameEntityByUserId(userDto.getUserId());
         gameEntity.setActive(false);
         return converter.toDto(gameRepository.save(gameEntity));
     }
@@ -79,7 +79,7 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
         return gameRepository.save(gameEntity);
     }
 
-    private GameEntity getGameEntityByUserId(@NonNull final long userId) throws GameNotFoundException {
+    private GameEntity getActiveGameEntityByUserId(@NonNull final long userId) throws GameNotFoundException {
         return gameRepository
                 .findGameEntityByUserEntityIdAndActiveTrue(userId)
                 .orElseThrow(GameNotFoundException::new);
