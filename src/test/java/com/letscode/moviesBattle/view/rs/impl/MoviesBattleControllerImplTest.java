@@ -20,6 +20,7 @@ import com.letscode.moviesBattle.domain.dto.RankingOfPlayersDto;
 import com.letscode.moviesBattle.domain.dto.UserDto;
 import com.letscode.moviesBattle.domain.exception.GameNotFinishedException;
 import com.letscode.moviesBattle.domain.exception.GameNotFoundException;
+import com.letscode.moviesBattle.domain.exception.InvalidValueException;
 import com.letscode.moviesBattle.domain.exception.MaximumErrorReachedException;
 import com.letscode.moviesBattle.domain.exception.UserNotFoundException;
 import com.letscode.moviesBattle.domain.service.MoviesBattleService;
@@ -167,7 +168,8 @@ class MoviesBattleControllerImplTest {
         return Stream.of(
                 arguments(new UserNotFoundException(), HttpStatus.NOT_FOUND.value()),
                 arguments(new GameNotFinishedException(), HttpStatus.CONFLICT.value()),
-                arguments(new GameNotFoundException(), HttpStatus.CONFLICT.value()),
+                arguments(new GameNotFoundException(), HttpStatus.NOT_FOUND.value()),
+                arguments(new InvalidValueException(), HttpStatus.BAD_REQUEST.value()),
                 arguments(new MaximumErrorReachedException(), HttpStatus.CONFLICT.value())
         );
     }

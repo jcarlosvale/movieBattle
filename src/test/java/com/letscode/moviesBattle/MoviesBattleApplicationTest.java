@@ -4,6 +4,7 @@ import static com.letscode.moviesBattle.view.rs.impl.Constants.MOVIES_BATTLE_MAP
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 
+import com.letscode.moviesBattle.domain.dto.AnswerDto;
 import com.letscode.moviesBattle.domain.dto.GameDto;
 import com.letscode.moviesBattle.domain.dto.UserDto;
 import com.letscode.moviesBattle.domain.repository.GameRepository;
@@ -95,5 +96,37 @@ class MoviesBattleApplicationTest {
                 .isEqualTo(112);
         assertThat(actualGameDto.getMovieOne().getImdbID())
                 .isNotEqualTo(actualGameDto.getMovieTwo().getImdbID());
+    }
+
+    @Test
+    void nextQuizNotAllowedWithoutStartedGame() {
+        //GIVEN
+        AnswerDto answerDto =
+                AnswerDto.builder()
+                        .userId(113)
+                        .imdbID("IMDB1")
+                        .build();
+        //WHEN
+        Throwable throwable = catchThrowable(() -> restTemplate.postForEntity(url + "/nextQuiz", answerDto, GameDto.class));
+
+        //THEN
+        assertThat(((HttpClientErrorException) throwable).getStatusCode())
+                .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void nextQuizNotAllowedErrorLimit() {
+        //GIVEN
+        AnswerDto answerDto =
+                AnswerDto.builder()
+                        .userId(114)
+                        .imdbID("IMDB1")
+                        .build();
+        //WHEN
+        Throwable throwable = catchThrowable(() -> restTemplate.postForEntity(url + "/nextQuiz", answerDto, GameDto.class));
+
+        //THEN
+        assertThat(((HttpClientErrorException) throwable).getStatusCode())
+                .isEqualTo(HttpStatus.CONFLICT);
     }
 }
