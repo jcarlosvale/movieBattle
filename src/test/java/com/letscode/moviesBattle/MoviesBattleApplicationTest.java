@@ -8,6 +8,7 @@ import com.letscode.moviesBattle.domain.dto.AnswerDto;
 import com.letscode.moviesBattle.domain.dto.GameDto;
 import com.letscode.moviesBattle.domain.dto.UserDto;
 import com.letscode.moviesBattle.domain.repository.GameRepository;
+import com.letscode.moviesBattle.domain.repository.model.GameEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -128,5 +129,55 @@ class MoviesBattleApplicationTest {
         //THEN
         assertThat(((HttpClientErrorException) throwable).getStatusCode())
                 .isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    void nextQuizRightAnswer() {
+        //GIVEN
+        AnswerDto answerDto =
+                AnswerDto.builder()
+                        .userId(115)
+                        .imdbID("IMDB2")
+                        .build();
+        //WHEN
+        ResponseEntity<GameDto> response = restTemplate.postForEntity(url + "/nextQuiz", answerDto, GameDto.class);
+
+        //THEN
+        GameEntity gameEntity = gameRepository.findById(115L).get();
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.CREATED);
+        assertThat(gameEntity.getUserEntity().getId())
+                .isEqualTo(115);
+        assertThat(gameEntity.getRightAnswers())
+                .isEqualTo(5);
+        assertThat(gameEntity.getWrongAnswers())
+                .isEqualTo(2);
+        assertThat(gameEntity.isActive())
+                .isTrue();
+    }
+
+    @Test
+    void nextQuizWrongAnswer() {
+        //GIVEN
+        AnswerDto answerDto =
+                AnswerDto.builder()
+                        .userId(116)
+                        .imdbID("IMDB1")
+                        .build();
+        //WHEN
+        ResponseEntity<GameDto> response = restTemplate.postForEntity(url + "/nextQuiz", answerDto, GameDto.class);
+
+        //THEN
+        GameEntity gameEntity = gameRepository.findById(116L).get();
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.CREATED);
+        assertThat(gameEntity.getUserEntity().getId())
+                .isEqualTo(116);
+        assertThat(gameEntity.getRightAnswers())
+                .isEqualTo(4);
+        assertThat(gameEntity.getWrongAnswers())
+                .isEqualTo(3);
+        assertThat(gameEntity.isActive())
+                .isTrue();
     }
 }
