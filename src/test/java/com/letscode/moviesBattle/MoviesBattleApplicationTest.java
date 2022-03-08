@@ -13,6 +13,7 @@ import com.letscode.moviesBattle.domain.repository.GameRepository;
 import com.letscode.moviesBattle.domain.repository.MovieRepository;
 import com.letscode.moviesBattle.domain.repository.model.GameEntity;
 import com.letscode.moviesBattle.domain.repository.model.QuizEntity;
+import java.util.ArrayList;
 import java.util.List;
 import javax.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +24,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -49,6 +53,14 @@ class MoviesBattleApplicationTest {
     @BeforeEach
     void beforeTest() {
         restTemplate = new RestTemplate();
+
+        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+        if (CollectionUtils.isEmpty(interceptors)) {
+            interceptors = new ArrayList<>();
+        }
+        interceptors.add(new BasicAuthenticationInterceptor("test", "test"));
+        restTemplate.setInterceptors(interceptors);
+
         url = "http://localhost:" + randomServerPort + MOVIES_BATTLE_MAPPING_PATH;
     }
 

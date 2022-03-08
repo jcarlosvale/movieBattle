@@ -1,6 +1,7 @@
 package com.letscode.moviesBattle;
 
 import com.letscode.moviesBattle.config.MoviesLoader;
+import com.letscode.moviesBattle.config.UsersLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -13,6 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 @ConfigurationPropertiesScan
 public class MoviesBattleApplication implements ApplicationRunner {
 
+	private final UsersLoader usersLoader;
 	private final MoviesLoader moviesLoader;
 
 	public static void main(String[] args) {
@@ -22,5 +24,6 @@ public class MoviesBattleApplication implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		moviesLoader.loadMovies();
+		usersLoader.loadUsers();
 	}
 }

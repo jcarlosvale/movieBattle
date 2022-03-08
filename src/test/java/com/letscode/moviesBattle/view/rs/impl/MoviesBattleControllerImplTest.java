@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.letscode.moviesBattle.config.MoviesLoader;
+import com.letscode.moviesBattle.config.UsersLoader;
+import com.letscode.moviesBattle.config.service.impl.UserDetailsServiceImpl;
 import com.letscode.moviesBattle.domain.dto.AnswerDto;
 import com.letscode.moviesBattle.domain.dto.GameDto;
 import com.letscode.moviesBattle.domain.dto.MovieDto;
@@ -31,6 +33,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -38,6 +41,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(MoviesBattleControllerImpl.class)
+@AutoConfigureMockMvc(addFilters = false)
 class MoviesBattleControllerImplTest {
 
     private final String USER_DTO_JSON = "{\"userId\" : 1}";
@@ -68,6 +72,10 @@ class MoviesBattleControllerImplTest {
     private MoviesBattleService service;
     @MockBean
     private MoviesLoader moviesLoader;
+    @MockBean
+    private UsersLoader usersLoader;
+    @MockBean
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private MockMvc mockMvc;
