@@ -66,6 +66,8 @@ public class MoviesLoader {
                 }
             }
         }
+        log.info("FINISHED MOVIES INSERTION.");
+
     }
 
     private List<String> readFileLines() {

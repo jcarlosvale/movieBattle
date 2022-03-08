@@ -8,7 +8,10 @@ import com.letscode.moviesBattle.domain.dto.AnswerDto;
 import com.letscode.moviesBattle.domain.dto.GameDto;
 import com.letscode.moviesBattle.domain.dto.UserDto;
 import com.letscode.moviesBattle.domain.repository.GameRepository;
+import com.letscode.moviesBattle.domain.repository.MovieRepository;
 import com.letscode.moviesBattle.domain.repository.model.GameEntity;
+import com.letscode.moviesBattle.domain.repository.model.QuizEntity;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ExtendWith(SpringExtension.class)
+@Transactional
 class MoviesBattleApplicationTest {
 
     private RestTemplate restTemplate;
@@ -32,6 +36,8 @@ class MoviesBattleApplicationTest {
 
     @Autowired
     private GameRepository gameRepository;
+    @Autowired
+    private MovieRepository movieRepository;
 
     @LocalServerPort
     private int randomServerPort = 0;
@@ -179,5 +185,38 @@ class MoviesBattleApplicationTest {
                 .isEqualTo(3);
         assertThat(gameEntity.isActive())
                 .isTrue();
+    }
+
+    @Test
+    void nextQuizGenerateValid() {
+        //GIVEN
+        AnswerDto answerDto =
+                AnswerDto.builder()
+                        .userId(117)
+                        .imdbID("IMDB3")
+                        .build();
+
+        QuizEntity expectedQuiz =
+                QuizEntity.builder()
+                        .movieOne(movieRepository.findById("IMDB1").get())
+                        .movieTwo(movieRepository.findById("IMDB2").get())
+                        .build();
+        //WHEN
+        ResponseEntity<GameDto> response = restTemplate.postForEntity(url + "/nextQuiz", answerDto, GameDto.class);
+
+        //THEN
+        GameEntity gameEntity = gameRepository.findById(117l).get();
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.CREATED);
+        assertThat(gameEntity.getUserEntity().getId())
+                .isEqualTo(117);
+        assertThat(gameEntity.getRightAnswers())
+                .isEqualTo(5);
+        assertThat(gameEntity.getWrongAnswers())
+                .isEqualTo(2);
+        assertThat(gameEntity.isActive())
+                .isTrue();
+        assertThat(gameEntity.getLastQuiz())
+                .isEqualTo(expectedQuiz);
     }
 }

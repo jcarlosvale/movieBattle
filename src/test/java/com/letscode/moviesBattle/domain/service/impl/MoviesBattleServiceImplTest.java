@@ -183,7 +183,8 @@ class MoviesBattleServiceImplTest {
         final var rightQuestions = 5;
         final var imdbID = "someAnswer";
         final var quizzes = new HashSet<QuizEntity>();
-        final var lastQuiz = mock(QuizEntity.class);
+        final var quiz = mock(QuizEntity.class);
+        final var lastQuiz = quiz;
 
         given(answerDto.getUserId())
                 .willReturn(USER_ID);
@@ -213,7 +214,7 @@ class MoviesBattleServiceImplTest {
 
         //THEN
         verify(quizService, times(1))
-                .save(gameEntity.getLastQuiz());
+                .save(quiz);
         verify(gameRepository, times(1))
                 .save(gameEntity);
         assertThat(actualDto)
@@ -235,6 +236,7 @@ class MoviesBattleServiceImplTest {
         final var imdbID = "someAnswer";
         final var winnerImdbID = "otherAnswer";
         final var quizzes = new HashSet<QuizEntity>();
+        final var quiz = mock(QuizEntity.class);
         final var lastQuiz = mock(QuizEntity.class);
 
         given(answerDto.getUserId())
@@ -264,8 +266,8 @@ class MoviesBattleServiceImplTest {
         final var actualDto = service.nextQuiz(answerDto);
 
         //THEN
-        verify(quizService, times(1))
-                .save(gameEntity.getLastQuiz());
+        verify(quizService, never())
+                .save(quiz);
         verify(gameRepository, times(1))
                 .save(gameEntity);
         assertThat(actualDto)

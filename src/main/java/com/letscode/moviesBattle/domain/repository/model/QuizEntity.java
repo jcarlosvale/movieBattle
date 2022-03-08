@@ -1,12 +1,17 @@
 package com.letscode.moviesBattle.domain.repository.model;
 
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "QUIZ")
@@ -37,8 +42,11 @@ public class QuizEntity {
             return false;
         }
         QuizEntity that = (QuizEntity) o;
-        return
-                this.movieOne.equals(that.movieOne) && this.movieTwo.equals(that.movieTwo) ||
-                this.movieOne.equals(that.movieTwo) && this.movieTwo.equals(that.movieOne);
+        return movieOne.equals(that.movieOne) && movieTwo.equals(that.movieTwo) || movieOne.equals(that.movieTwo) && movieTwo.equals(that.movieOne) ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(movieOne, movieTwo);
     }
 }

@@ -1,14 +1,21 @@
 package com.letscode.moviesBattle.domain.repository.model;
 
+import static javax.persistence.CascadeType.ALL;
+
+import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.Set;
 
 @Entity
 @Table(name = "GAME")
@@ -40,7 +47,7 @@ public class GameEntity {
     private int rightAnswers;
 
     @NotNull
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id")
+    @OneToMany(fetch = FetchType.EAGER, cascade = ALL)
     private Set<QuizEntity> quizzes;
 
     public GameEntity(final long id, final UserEntity userEntity, final QuizEntity lastQuiz, final Set<QuizEntity> quizzes) {

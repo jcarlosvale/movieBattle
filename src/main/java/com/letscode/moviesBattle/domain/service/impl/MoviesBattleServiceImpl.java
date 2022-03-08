@@ -25,7 +25,6 @@ import java.util.Set;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +36,8 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
     private final GameRepository gameRepository;
 
     private final Converter converter;
+
+    private final int MAX_ERRORS = 3;
 
     @Override
     public GameDto startGame(final UserDto userDto) throws BusinessException {
@@ -54,8 +55,10 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
         GameEntity gameEntity = getActiveGameEntityByUserId(answerDto.getUserId());
         validateErrorLimit(gameEntity);
         updateScore(gameEntity, answerDto.getImdbID());
-        insertNewQuiz(gameEntity);
-        saveGameAndLastQuiz(gameEntity);
+        if (gameEntity.getWrongAnswers() < MAX_ERRORS) {
+            insertNewQuiz(gameEntity);
+        }
+        gameRepository.save(gameEntity);
         return converter.toDto(gameEntity);
     }
 
@@ -73,26 +76,31 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
         return converter.toDto(rankingProjectionList);
     }
 
-    @Transactional
-    protected GameEntity saveGameAndLastQuiz(final GameEntity gameEntity) {
-        quizService.save(gameEntity.getLastQuiz());
-        return gameRepository.save(gameEntity);
-    }
-
     private GameEntity getActiveGameEntityByUserId(@NonNull final long userId) throws GameNotFoundException {
         return gameRepository
                 .findGameEntityByUserEntityIdAndActiveTrue(userId)
                 .orElseThrow(GameNotFoundException::new);
     }
 
+    //TODO: implements case when finish options to generate quiz
     private GameEntity insertNewQuiz(final GameEntity game) {
         QuizEntity quiz = quizService.generateQuizCandidate();
-        while(game.getQuizzes().contains(quiz)) {
+        while(contains(game.getQuizzes(), quiz)) {
             quiz = quizService.generateQuizCandidate();
         }
+        quizService.save(quiz);
         game.setLastQuiz(quiz);
         game.getQuizzes().add(quiz);
         return game;
+    }
+
+    private boolean contains(Set<QuizEntity> quizzes, QuizEntity quiz) {
+        for(QuizEntity presentQuiz : quizzes) {
+            if (presentQuiz.equals(quiz)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private GameEntity updateScore(final GameEntity gameEntity, final String imdbID) {
@@ -106,7 +114,6 @@ public class MoviesBattleServiceImpl implements MoviesBattleService {
     }
 
     private void validateErrorLimit(final GameEntity gameEntity) throws MaximumErrorReachedException {
-        final int MAX_ERRORS = 3;
         if (gameEntity.getWrongAnswers() >= MAX_ERRORS) {
             throw new MaximumErrorReachedException();
         }
