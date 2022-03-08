@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PlayerPositionDto {
 
-    private int position;
     private String user;
     private int points;
 

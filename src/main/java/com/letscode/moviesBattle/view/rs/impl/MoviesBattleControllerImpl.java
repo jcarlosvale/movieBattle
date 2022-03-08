@@ -46,7 +46,7 @@ public class MoviesBattleControllerImpl implements MoviesBattleController {
 
     @Override
     @GetMapping(path = "/ranking/{top}")
-    public ResponseEntity<RankingOfPlayersDto> getRanking(@PathVariable int top) throws BusinessException {
+    public ResponseEntity<RankingOfPlayersDto> getRanking(@PathVariable final int top) throws BusinessException {
         return new ResponseEntity<>(service.getRanking(top), HttpStatus.OK);
     }
 }

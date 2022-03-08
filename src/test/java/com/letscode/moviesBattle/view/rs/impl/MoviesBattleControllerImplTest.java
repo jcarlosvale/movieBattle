@@ -51,7 +51,7 @@ class MoviesBattleControllerImplTest {
             RankingOfPlayersDto.builder()
                     .playerPositionDtoList(
                             List.of(
-                                    PlayerPositionDto.builder().position(1).user("user").points(100).build()
+                                    PlayerPositionDto.builder().user("user").points(100).build()
                             ))
                     .build();
 

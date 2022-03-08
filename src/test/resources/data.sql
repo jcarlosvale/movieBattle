@@ -129,3 +129,35 @@ values
 INSERT INTO GAME_QUIZZES(GAME_ENTITY_ID, QUIZZES_ID)
 values
     (119, 119);
+
+--DATA USED TO RANKING TEST
+INSERT INTO USER (id, user_name, password, active, roles)
+VALUES
+    (120, 'user120', 'pass120', true, 'USER'),
+    (121, 'user121', 'pass121', true, 'USER'),
+    (122, 'user122', 'pass122', true, 'USER');
+
+insert into QUIZ (ID, MOVIE_ONE_IMDBID, MOVIE_TWO_IMDBID)
+values
+    (120, 'IMDB1', 'IMDB2'),
+    (121, 'IMDB1', 'IMDB2'),
+    (122, 'IMDB1', 'IMDB3'),
+    (123, 'IMDB2', 'IMDB3'),
+    (124, 'IMDB1', 'IMDB2'),
+    (125, 'IMDB2', 'IMDB3');
+
+INSERT INTO GAME (ID, ACTIVE, RIGHT_ANSWERS, WRONG_ANSWERS, LAST_QUIZ_ID, USER_ENTITY_ID)
+values
+    (120, false, 10, 3, 120, 120),
+    (121, false, 10, 3, 121, 121),
+    (122, false, 20, 2, 123, 121),
+    (123, false, 20, 3, 125, 122);
+
+INSERT INTO GAME_QUIZZES(GAME_ENTITY_ID, QUIZZES_ID)
+values
+    (120, 120),
+    (121, 121),
+    (122, 122),
+    (122, 123),
+    (123, 124),
+    (123, 125);

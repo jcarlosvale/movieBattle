@@ -38,7 +38,6 @@ public class Converter {
                         .map(rankingProjection ->
                             PlayerPositionDto
                                 .builder()
-                                    .position(rankingProjection.getPosition())
                                     .user(rankingProjection.getUser())
                                     .points(rankingProjection.getPoints())
                                     .build())

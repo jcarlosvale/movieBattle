@@ -107,16 +107,12 @@ class ConverterTest {
     void convertListOfRankingProjection() {
         //GIVEN
         final var rankingProjection1 = mock(RankingProjection.class);
-        given(rankingProjection1.getPosition())
-                .willReturn(1);
         given(rankingProjection1.getUser())
                 .willReturn("user1");
         given(rankingProjection1.getPoints())
                 .willReturn(100);
 
         final var rankingProjection2 = mock(RankingProjection.class);
-        given(rankingProjection2.getPosition())
-                .willReturn(2);
         given(rankingProjection2.getUser())
                 .willReturn("user2");
         given(rankingProjection2.getPoints())
@@ -124,8 +120,8 @@ class ConverterTest {
 
         final var rankingProjectionList = List.of(rankingProjection1, rankingProjection2);
 
-        final var player1 = PlayerPositionDto.builder().position(1).user("user1").points(100).build();
-        final var player2 = PlayerPositionDto.builder().position(2).user("user2").points(50).build();
+        final var player1 = PlayerPositionDto.builder().user("user1").points(100).build();
+        final var player2 = PlayerPositionDto.builder().user("user2").points(50).build();
         final var playerPositionDtoList = List.of(player1, player2);
         final var rankingOfPlayersDto = RankingOfPlayersDto.builder().playerPositionDtoList(playerPositionDtoList).build();
 

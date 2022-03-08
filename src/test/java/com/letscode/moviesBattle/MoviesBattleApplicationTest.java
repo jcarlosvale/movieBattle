@@ -6,11 +6,14 @@ import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 
 import com.letscode.moviesBattle.domain.dto.AnswerDto;
 import com.letscode.moviesBattle.domain.dto.GameDto;
+import com.letscode.moviesBattle.domain.dto.PlayerPositionDto;
+import com.letscode.moviesBattle.domain.dto.RankingOfPlayersDto;
 import com.letscode.moviesBattle.domain.dto.UserDto;
 import com.letscode.moviesBattle.domain.repository.GameRepository;
 import com.letscode.moviesBattle.domain.repository.MovieRepository;
 import com.letscode.moviesBattle.domain.repository.model.GameEntity;
 import com.letscode.moviesBattle.domain.repository.model.QuizEntity;
+import java.util.List;
 import javax.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+//TODO: improve parameters usage in the code below, avoid to use magic numbers
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ExtendWith(SpringExtension.class)
@@ -254,5 +258,34 @@ class MoviesBattleApplicationTest {
                 .isFalse();
         assertThat(actualGameDto.getUserId())
                 .isEqualTo(119);
+    }
+
+    @Test
+    void rankingOk() {
+        //GIVEN WHEN
+        ResponseEntity<RankingOfPlayersDto> response = restTemplate.getForEntity(url + "/ranking/3", RankingOfPlayersDto.class);
+
+        //THEN
+        List<PlayerPositionDto> playerPositionDtoList = response.getBody().getPlayerPositionDtoList();
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.OK);
+
+        assertThat(playerPositionDtoList.size())
+                .isEqualTo(3);
+
+        assertThat(playerPositionDtoList.get(0).getUser())
+                .isEqualTo("user121");
+        assertThat(playerPositionDtoList.get(0).getPoints())
+                .isEqualTo(30);
+
+        assertThat(playerPositionDtoList.get(1).getUser())
+                .isEqualTo("user122");
+        assertThat(playerPositionDtoList.get(1).getPoints())
+                .isEqualTo(20);
+
+        assertThat(playerPositionDtoList.get(2).getUser())
+                .isEqualTo("user120");
+        assertThat(playerPositionDtoList.get(2).getPoints())
+                .isEqualTo(10);
     }
 }

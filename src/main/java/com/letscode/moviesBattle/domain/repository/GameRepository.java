@@ -12,13 +12,13 @@ public interface GameRepository extends JpaRepository<GameEntity, Long> {
 
     String GET_RANKING =
             "select \n"
-                    + "\trownum() as position, "
                     + "\tu.user_name as user, "
                     + "\tsum(g.right_answers) as points \n"
                     + "\tfrom user u\n"
                     + "\tjoin game g on (g.user_entity_id = u.id)\n"
+                    + "\twhere g.active = false\n"
                     + "\tgroup by u.user_name\n"
-                    + "\torder by points asc\n"
+                    + "\torder by points desc\n"
                     + "\tlimit :top";
     @Query(value = GET_RANKING, nativeQuery = true )
     List<RankingProjection> getRanking(@Param("top") int topPlayers);
