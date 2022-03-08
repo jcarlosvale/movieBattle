@@ -219,4 +219,40 @@ class MoviesBattleApplicationTest {
         assertThat(gameEntity.getLastQuiz())
                 .isEqualTo(expectedQuiz);
     }
+
+    @Test
+    void stopGameNotAllowedWithoutStartedGame() {
+        //GIVEN
+        UserDto userDto =
+                UserDto.builder()
+                        .userId(-1)
+                        .build();
+        //WHEN
+        Throwable throwable = catchThrowable(() -> restTemplate.postForEntity(url + "/stopGame", userDto, GameDto.class));
+
+        //THEN
+        assertThat(((HttpClientErrorException) throwable).getStatusCode())
+                .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void stopGameOk() {
+        //GIVEN
+        UserDto userDto =
+                UserDto.builder()
+                        .userId(119)
+                        .build();
+
+        //WHEN
+        ResponseEntity<GameDto> response = restTemplate.postForEntity(url + "/stopGame", userDto, GameDto.class);
+
+        //THEN
+        GameDto actualGameDto = response.getBody();
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.CREATED);
+        assertThat(gameRepository.findGameEntityByUserEntityIdAndActiveTrue(userDto.getUserId()).isPresent())
+                .isFalse();
+        assertThat(actualGameDto.getUserId())
+                .isEqualTo(119);
+    }
 }
